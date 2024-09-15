@@ -37,38 +37,42 @@ jobs:
   terraform:
     name: Apply and Destroy Terraform
     env:
-      DESTROY: 'false'
+      DESTROY: 'true' # Change it to destroy infra
     needs: changes
     if: ${{ needs.changes.outputs.terraform == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+          
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.9.5"
+          
       - name: Terraform Init
-        run: | 
-          echo ${{ env.DESTROY }}
+        run: |
           terraform init -reconfigure
         working-directory: terraform
+        
       - name: Apply Terraform
-        if:  ${{ env.DESTROY == 'true'}}
+        if:  ${{ env.DESTROY == 'false'}}
         run: terraform apply --var-file=var.tfvars --auto-approve
         working-directory: terraform
-      - name: Destroy Terraform (Conditional)
-        if: ${{ env.DESTROY == 'false'}}
+        
+      - name: Destroy Terraform 
+        if: ${{ env.DESTROY == 'true'}}
         run: |
-          
-          #terraform destroy --var-file=var.tfvars --auto-approve
+          terraform destroy --var-file=var.tfvars --auto-approve
         working-directory: terraform
+        
   eks-cluster-1a:
     name: Install Redis Helm Chart on eks-cluster-1a
     runs-on: ubuntu-latest
