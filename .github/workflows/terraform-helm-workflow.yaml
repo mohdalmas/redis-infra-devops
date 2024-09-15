@@ -60,11 +60,11 @@ jobs:
           terraform init -reconfigure
         working-directory: terraform
       - name: Apply Terraform
-        if:  ${{ env.DESTROY }} == 'true'
+        if:  ${{ env.DESTROY == 'true'}}
         run: terraform apply --var-file=var.tfvars --auto-approve
         working-directory: terraform
       - name: Destroy Terraform (Conditional)
-        if: ${{ env.DESTROY }} == 'false'
+        if: ${{ env.DESTROY == 'false'}}
         run: |
           
           #terraform destroy --var-file=var.tfvars --auto-approve
