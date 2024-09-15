@@ -829,7 +829,7 @@ updateJob:
 ##
 
 ## Redis&reg; Cluster settings
-##
+###
 cluster:
   ## @param cluster.init Enable the initialization of the Redis&reg; Cluster
   ##
