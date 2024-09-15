@@ -18,9 +18,9 @@ This repository is designed to help you deploy and manage Redis on AWS EKS clust
 **Overview**
 This repository provides the tools and configurations necessary to deploy a Redis cluster across two EKS clusters. Key features include:
 
-# Cluster Configuration: Two EKS clusters are created and configured to work together in a high-availability setup.
-# Redis Interaction: You can interact with the Redis cluster by connecting to any Redis pod and using redis-cli.
-# Data Persistence: Redis data is persisted using EBS volumes with the Append-Only File (AOF) mechanism to ensure data durability.
+**Cluster Configuration**: Two EKS clusters are created and configured to work together in a high-availability setup.
+**Redis Interaction**: You can interact with the Redis cluster by connecting to any Redis pod and using redis-cli.
+**Data Persistence**: Redis data is persisted using EBS volumes with the Append-Only File (AOF) mechanism to ensure data durability.
 
 
 **Prerequisites**
@@ -58,38 +58,37 @@ scripts/
 git clone https://github.com/mohdalmas/redis-infra-devops.git
 cd redis-infra-devops
 
-# Setup Terraform:
-# Initialize Terraform and apply the configurations to set up the infrastructure:
+**Setup Terraform**
 
-**bash**
+**Initialize Terraform and apply the configurations to set up the infrastructure:**
 terraform init
 terraform apply
 
-Deploy Redis Using Helm:
+**Deploy Redis Using Helm:**
 Update the Helm chart values for your specific clusters and install Redis:
 
-# For Cluster 1a
+**For Cluster 1a**
 aws eks update-kubeconfig --region us-east-1 --name eks-cluster-1a
 helm install redis-cluster-a ./charts -f ./charts/values_a.yaml -n redis-cluster --create-namespace --set global.redis.password=<your_password>
 
-# For Cluster 1b
+**For Cluster 1b**
 aws eks update-kubeconfig --region us-east-1 --name eks-cluster-1b
 helm install redis-cluster-b ./charts -f ./charts/values_b.yaml -n redis-cluster --create-namespace --set global.redis.password=<your_password>
 
-Usage
+**Usage**
 Once the Redis clusters are deployed, you can interact with them as follows:
 
-# Connect to a Redis Pod:
+**Connect to a Redis Pod:**
 kubectl exec -it <pod_name> -n redis-cluster -- bash
 redis-cli -c -h <headless-service or any service> -a <password>
 
-Check Redis Cluster Status:
+**Check Redis Cluster Status:**
 redis-cli -c -h <headless-service or any service> -a <password> CLUSTER NODES
 
 Use redis-cli commands to check the status of the Redis cluster and perform operations.
 
 
-CI/CD Workflows
+**CI/CD Workflows**
 This repository uses GitHub Actions for continuous integration and deployment. The workflows are defined in .github/workflows/workflow.yml and include steps for deploying infrastructure and redis chart.
 
 
