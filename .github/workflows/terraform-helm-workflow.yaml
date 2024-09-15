@@ -25,6 +25,7 @@ jobs:
     steps:
     - uses: dorny/paths-filter@v3
       id: filter
+      base: ${{ github.ref }}
       with:
         filters: |
           terraform:
