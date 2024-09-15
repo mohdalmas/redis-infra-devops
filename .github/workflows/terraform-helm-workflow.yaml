@@ -16,6 +16,8 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     # Required permissions
+    env:
+      DESTROY: false
     permissions:
       pull-requests: read
     # Set job outputs to values from filter step
@@ -23,9 +25,20 @@ jobs:
       terraform: ${{ steps.filter.outputs.terraform }}
       charts: ${{ steps.filter.outputs.charts }}
     steps:
+    
     - name: Checkout source code
       uses: actions/checkout@v3
       
+    - name: check evaluation True
+      if: ${{ env.DESTROY == true}}
+      run: |
+         echo "GREEN"
+         
+    - name: check evaluation True
+      if: ${{ env.DESTROY == false}}
+      run: |
+         echo "RED"
+         
     - uses: dorny/paths-filter@v3
       id: filter
       with:
