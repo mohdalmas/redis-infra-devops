@@ -15,7 +15,7 @@ locals {
     }
   }
 }
-## This is the resource to run the Local Script.##
+## This is the resource to run the Local Script.#
 resource "null_resource" "coredns_run_script" {
   provisioner "local-exec" {
     command = "bash ${path.module}/scripts/coredns_change.sh -c eks-cluster-1a -d eks-cluster-1b -f ${path.module}/files/coredns-configmap-eks-cluster.yaml"
