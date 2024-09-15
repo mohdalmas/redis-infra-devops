@@ -29,4 +29,6 @@ resource "aws_security_group_rule" "allow_all_inbound" {
   protocol          = "-1"  # Allow all protocols
   security_group_id = each.value
   cidr_blocks       = ["0.0.0.0/0"]
+
+  depends_on     = [aws_eks_cluster.eks_clusters]
 }
