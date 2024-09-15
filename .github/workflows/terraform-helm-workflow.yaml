@@ -23,6 +23,9 @@ jobs:
       terraform: ${{ steps.filter.outputs.terraform }}
       charts: ${{ steps.filter.outputs.charts }}
     steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+      
     - uses: dorny/paths-filter@v3
       id: filter
       with:
