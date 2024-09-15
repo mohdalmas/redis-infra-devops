@@ -60,12 +60,6 @@ jobs:
         run: terraform init -reconfigure
         working-directory: terraform
 
-      - name: Check for changes in /terraform
-        id: check-changes
-        run: |
-          git diff --exit-code HEAD^ HEAD terraform || echo "Changes detected"
-        working-directory: terraform
-
       - name: Apply Terraform
         if: ${{ github.event.inputs.destroy == 'false'}}
         run: terraform apply --var-file=var.tfvars --auto-approve
