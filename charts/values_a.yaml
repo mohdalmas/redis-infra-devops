@@ -850,7 +850,7 @@ cluster:
   ##
   replicas: 1
   ## Configuration to access the Redis&reg; Cluster from outside the Kubernetes cluster
-  ##
+  ## Pointing to the Other Cluster.
   externalNamespace:
     enabled: true
     extraNodes: 
