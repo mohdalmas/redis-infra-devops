@@ -89,7 +89,7 @@ spec:
             - -c
             - |
               echo "Waiting for other Redis nodes to be ready..."
-              sleep 20
+              sleep 60
       containers:
         - name: {{ include "common.names.fullname" . }}
           image: {{ include "redis-cluster.image" . }}

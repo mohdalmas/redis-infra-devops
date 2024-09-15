@@ -128,39 +128,4 @@ module "iam_eks_role" {
 }
 
 
-# resource "aws_iam_role" "external_dns_role" {
-#   name = "external-dns-role-tf"
-
-#   assume_role_policy = jsonencode({
-#     "Version": "2012-10-17",
-#     "Statement": [
-#         {
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "Federated": [
-#                     "arn:aws:iam::${var.account_id}:oidc-provider/${replace(data.tls_certificate.oidc[local.cluster_1a.cluster_name].url, "https://", "")}",
-#                     "arn:aws:iam::${var.account_id}:oidc-provider/${replace(data.tls_certificate.oidc[local.cluster_1b.cluster_name].url, "https://", "")}"
-#                 ]
-#             },
-#             "Action": "sts:AssumeRoleWithWebIdentity",
-#             "Condition": {
-#                 "StringEquals": {
-#                     "${replace(data.tls_certificate.oidc[local.cluster_1a.cluster_name].url, "https://", "")}:aud": "sts.amazonaws.com",
-#                     "${replace(data.tls_certificate.oidc[local.cluster_1a.cluster_name].url, "https://", "")}:sub": "system:serviceaccount:kube-system:external-dns",
-#                     "${replace(data.tls_certificate.oidc[local.cluster_1b.cluster_name].url, "https://", "")}:sub": "system:serviceaccount:kube-system:external-dns",
-#                     "${replace(data.tls_certificate.oidc[local.cluster_1b.cluster_name].url, "https://", "")}:aud": "sts.amazonaws.com"
-#                 }
-#             }
-#         }
-#     ]
-# })
-#   tags = var.default_tags
-# }
-
-# resource "aws_iam_role_policy_attachment" "external_dns_role_policy_attachement" {
-#   role       = aws_iam_role.external_dns_role.name
-#   policy_arn = aws_iam_policy.external_dns_policy.arn
-# }
-
-
 ###################################

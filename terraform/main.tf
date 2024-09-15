@@ -33,38 +33,6 @@ provider "kubernetes" {
 }
 
 
-# Helm Provider Configs, passing the Kubernetes provider
-provider "helm" {
-  alias = "cluster_1a"
-
-  kubernetes {
-    host                   = data.aws_eks_cluster.eks["cluster_1a"].endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks["cluster_1a"].certificate_authority[0].data)
-
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.eks["cluster_1a"].name]
-      command     = "aws"
-    }
-  }
-}
-
-provider "helm" {
-  alias = "cluster_1b"
-
-  kubernetes {
-    host                   = data.aws_eks_cluster.eks["cluster_1b"].endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks["cluster_1b"].certificate_authority[0].data)
-
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.eks["cluster_1b"].name]
-      command     = "aws"
-    }
-  }
-}
-
-
 provider "local" {
   # Local provider configuration (if needed)
 }

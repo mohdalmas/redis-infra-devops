@@ -5,13 +5,14 @@ resource "aws_eks_cluster" "eks_clusters" {
 
   name     = each.value.cluster_name
   role_arn = aws_iam_role.eks_cluster_role.arn
-  version  = "1.29"
+  version  = "1.28"
   access_config {
     authentication_mode = "API_AND_CONFIG_MAP"
   }
   vpc_config {
     subnet_ids         = [each.value.private_subnet, each.value.public_subnet] # Using private subnets
     security_group_ids = [aws_security_group.eks_sg.id]
+    
   }
 
   tags = var.default_tags
@@ -57,6 +58,7 @@ resource "aws_eks_addon" "aws_ebs_csi_driver" {
   addon_name                  = "aws-ebs-csi-driver"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on                  = [aws_eks_cluster.eks_clusters]
+  addon_version="v1.34.0-eksbuild.1"
   # timeouts {
   #   create = "20m"
   #   update = "20m"
@@ -75,6 +77,7 @@ resource "aws_eks_addon" "coredns" {
   addon_name                  = "coredns"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on                  = [aws_eks_cluster.eks_clusters]
+  
   # timeouts {
   #   create = "20m"
   #   update = "20m"
@@ -94,6 +97,7 @@ resource "aws_eks_addon" "kube_proxy" {
   addon_name                  = "kube-proxy"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on                  = [aws_eks_cluster.eks_clusters]
+  addon_version="v1.28.12-eksbuild.5"
   # timeouts {
   #   create = "15m"
   #   update = "15m"
@@ -137,8 +141,8 @@ resource "aws_eks_node_group" "node_groups" {
   subnet_ids      = [each.value.private_subnet]
 
   scaling_config {
-    desired_size = 0
-    min_size     = 0
+    desired_size = 1
+    min_size     = 1
     max_size     = 1
   }
 

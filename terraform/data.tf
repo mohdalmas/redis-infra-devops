@@ -15,6 +15,7 @@ data "aws_eks_cluster" "eks" {
   for_each = aws_eks_cluster.eks_clusters
 
   name = each.value.name
+  depends_on = [aws_eks_cluster.eks_clusters]
 }
 
 data "aws_eks_cluster_auth" "eks" {
