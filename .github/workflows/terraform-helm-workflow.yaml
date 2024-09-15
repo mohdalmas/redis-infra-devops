@@ -37,6 +37,8 @@ jobs:
             - 'charts/**'
   terraform:
     name: Apply and Destroy Terraform
+    env:
+      DESTROY: false
     needs: changes
     if: ${{ needs.changes.outputs.terraform == 'true' }}
     runs-on: ubuntu-latest
@@ -57,16 +59,18 @@ jobs:
           terraform_version: "1.9.5"
 
       - name: Terraform Init
-        run: terraform init -reconfigure
+        run: | 
+          echo ${{ env.DESTROY }}
+          terraform init -reconfigure
         working-directory: terraform
 
       - name: Apply Terraform
-        if: ${{ github.event.inputs.destroy == 'false'}}
+        if: ${{ "${{ env.DESTROY }}" == "true" }}
         run: terraform apply --var-file=var.tfvars --auto-approve
         working-directory: terraform
 
       - name: Destroy Terraform (Conditional)
-        if: ${{ github.event.inputs.destroy == 'true'}}
+        if: ${{ "${{ env.DESTROY }}" == "false"}}
         run: terraform destroy -auto-approve
         working-directory: terraform
 
