@@ -58,7 +58,7 @@ resource "aws_eks_addon" "aws_ebs_csi_driver" {
   addon_name                  = "aws-ebs-csi-driver"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on                  = [aws_eks_cluster.eks_clusters]
-  addon_version="v1.34.0-eksbuild.1"
+  
   # timeouts {
   #   create = "20m"
   #   update = "20m"
@@ -97,7 +97,7 @@ resource "aws_eks_addon" "kube_proxy" {
   addon_name                  = "kube-proxy"
   resolve_conflicts_on_update = "PRESERVE"
   depends_on                  = [aws_eks_cluster.eks_clusters]
-  addon_version="v1.28.12-eksbuild.5"
+  
   # timeouts {
   #   create = "15m"
   #   update = "15m"

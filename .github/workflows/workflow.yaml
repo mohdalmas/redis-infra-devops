@@ -11,7 +11,7 @@ jobs:
     name: Apply and Destroy Terraform
     runs-on: ubuntu-latest
     env:
-      DESTROY: 'false' # Change it to falsedestroy infra
+      DESTROY: 'true' # Change it to falsedestroy infra
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -34,19 +34,36 @@ jobs:
         
       - name: Apply Terraform
         if:  ${{ env.DESTROY == 'false'}}
-        run: terraform apply --var-file=var.tfvars --auto-approve
+        run: |
+          echo "Running Terraform apply..."
+          terraform apply --var-file=var.tfvars --auto-approve || { 
+            echo "First attempt failed, retrying...";
+            terraform apply --var-file=var.tfvars --auto-approve;
+          }
         working-directory: terraform
         
-      - name: Destroy Terraform 
-        if: ${{ env.DESTROY == 'true'}}
+      - name: Destroy Terraform
+        if: ${{ env.DESTROY == 'true' }}
+        id: destroy_output
         run: |
-          terraform destroy --var-file=var.tfvars --auto-approve
+          echo "Running Terraform destroy..."
+          terraform destroy --var-file=var.tfvars --auto-approve || {
+            echo "First attempt failed, retrying...";
+            terraform destroy --var-file=var.tfvars --auto-approve;
+          }
+          echo "::set-output name=destroy_success::true"
         working-directory: terraform
+
+      - name: Set destroy output (no destroy)
+        if: ${{ env.DESTROY == 'false' }}
+        id: destroy_output
+        run: echo "::set-output name=destroy_success::false"
 
   # Job 2: Install Redis Helm Chart on eks-cluster-1a
   eks-cluster-1a:
     name: Install Redis Helm Chart on eks-cluster-1a
     runs-on: ubuntu-latest
+    if: ${{ needs.terraform.outputs.destroy_complete == 'false' }}
     needs: terraform  # Depends on Job 1 completion
     steps:
       - name: Checkout repository
@@ -84,6 +101,7 @@ jobs:
   eks-cluster-1b:
     name: Install Redis Helm Chart on eks-cluster-1b
     runs-on: ubuntu-latest
+    if: ${{ needs.terraform.outputs.destroy_complete == 'false' }}
     needs: terraform  # Depends on Job 1 completion
     steps:
       - name: Checkout repository

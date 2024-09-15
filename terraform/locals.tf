@@ -21,7 +21,9 @@ resource "null_resource" "coredns_run_script" {
     command = "bash ${path.module}/scripts/external_dns_install.sh -c eks-cluster-1a -d eks-cluster-1b -f ${path.module}/files/coredns-configmap-eks-cluster.yaml -r ${var.region} -z ${aws_route53_zone.devops.zone_id} -n ${aws_route53_zone.devops.name} -a ${module.iam_eks_role.iam_role_arn}"
     on_failure = fail
   }
-
+triggers = {
+    always_run = "${timestamp()}"  # Use a timestamp or another always-changing value
+  }
   depends_on     = [aws_eks_addon.coredns]
   
 }
