@@ -29,7 +29,7 @@ data:
       log
       errors
       health
-      forward . 10.0.0.2
+      forward . 10.193.0.2
       cache 30
       reload
       loadbalance

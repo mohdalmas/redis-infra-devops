@@ -1,7 +1,7 @@
 
 
 **Redis Infrastructure DevOps**
-This repository provides Terraform and Helm configurations for setting up and managing Redis infrastructure on AWS EKS clusters. It includes scripts for operational tasks and GitHub Actions workflows for CI/CD.
+This repository provides Terraform and Helm configurations for setting up and managing Redis infrastructure on AWS EKS clusters.
 
 **Table of Contents**
 - Introduction
@@ -9,7 +9,6 @@ This repository provides Terraform and Helm configurations for setting up and ma
 - Repository Structure
 - Setup Instructions
 - Usage
-- CI/CD Workflows
 
 
 **Introduction**
@@ -22,6 +21,11 @@ This repository provides the tools and configurations necessary to deploy a Redi
 **Redis Interaction**: You can interact with the Redis cluster by connecting to any Redis pod and using redis-cli.
 **Data Persistence**: Redis data is persisted using EBS volumes with the Append-Only File (AOF) mechanism to ensure data durability.
 
+**External DNS***
+The Main issue for Cross cluster is connecting these nodes together which I have resolved using VPC plugin & External DNS.
+- Added Nodes using FQDN so they wont reply on pods IP since it is very dynamic.
+- Network connectivity is being achived using VPC CNI pluging so it allow inter vpc communidation.
+- ExternalDNS used to propagate Pods IP with the FQDN into Route53 and then using Route53 to resolve domain specific query.
 
 **Prerequisites**
 Before using this repository, ensure you have the following:
@@ -46,12 +50,7 @@ terraform/
 
 scripts/
     └── external_dns_install.sh
-        └── Script for updating CoreDNS configurations and INstalling External DNS to update Route53 records automaticelly.
-
-.github/
-    └── workflows/
-        └── workflow.yml
-            └── Main GitHub Actions workflow file.
+        └── Script for updating CoreDNS configurations and INstalling External DNS to update Route53 records automatically.
 
 
 **bash code**
@@ -87,8 +86,5 @@ redis-cli -c -h <headless-service or any service> -a <password> CLUSTER NODES
 
 Use redis-cli commands to check the status of the Redis cluster and perform operations.
 
-
-**CI/CD Workflows**
-This repository uses GitHub Actions for continuous integration and deployment. The workflows are defined in .github/workflows/workflow.yml and include steps for deploying infrastructure and redis chart.
 
 

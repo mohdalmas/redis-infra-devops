@@ -76,19 +76,19 @@ sleep 5
 kubectl config get-contexts
 
 # Apply ConfigMap and restart CoreDNS on cluster A
-echo "Applying ConfigMap ${CONFIGMAP_FILE} to cluster ${CONTEXT_CLUSTER_A}..."
+echo "Applying ConfigMap ${CONFIGMAP_FILE} to cluster ${CONTEXT_CLUSTER_A} to add Route53 route..."
 kubectl --context="${CONTEXT_CLUSTER_A_ARN}" apply -f "${CONFIGMAP_FILE}"
 kubectl --context="${CONTEXT_CLUSTER_A_ARN}" rollout restart deploy coredns -n kube-system
 
 # Apply ConfigMap and restart CoreDNS on cluster B
-echo "Applying ConfigMap ${CONFIGMAP_FILE} to cluster ${CONTEXT_CLUSTER_B}..."
+echo "Applying ConfigMap ${CONFIGMAP_FILE} to cluster ${CONTEXT_CLUSTER_B} to add Route53 route..."
 kubectl --context="${CONTEXT_CLUSTER_B_ARN}" apply -f "${CONFIGMAP_FILE}"
 kubectl --context="${CONTEXT_CLUSTER_B_ARN}" rollout restart deploy coredns -n kube-system
 
-# Install Core DNS Helm chart on cluster A
-echo "Installing Core DNS Helm chart on cluster ${CONTEXT_CLUSTER_A}..."
+# Install External DNS Helm chart on cluster A
+echo "Installing External DNS Helm chart on cluster ${CONTEXT_CLUSTER_A}..."
 aws eks update-kubeconfig --region "${AWS_REGION}" --name "${CONTEXT_CLUSTER_A}"
-helm install externaldns-release \
+helm upgrade --wait --timeout 900s  --install externaldns-release \
   --namespace kube-system \
   oci://registry-1.docker.io/bitnamicharts/external-dns \
   --set provider=aws \
@@ -98,12 +98,13 @@ helm install externaldns-release \
   --set serviceAccount.name=external-dns \
   --set serviceAccount.create=true \
   --set serviceAccount.annotations="eks.amazonaws.com/role-arn: ${IAM_ROLE_ARN}" \
-  --set policy=sync 
-  
-# Install Core DNS Helm chart on cluster B
-echo "Installing Core DNS Helm chart on cluster ${CONTEXT_CLUSTER_B}..."
+  --set policy=upsert-only 
+echo "####################################################################"
+
+# Install External DNS Helm chart on cluster B
+echo "Installing External DNS Helm chart on cluster ${CONTEXT_CLUSTER_B}..."
 aws eks update-kubeconfig --region "${AWS_REGION}" --name "${CONTEXT_CLUSTER_B}"
-helm install externaldns-release \
+helm upgrade --wait --timeout 900s  --install externaldns-release \
   --namespace kube-system \
   oci://registry-1.docker.io/bitnamicharts/external-dns \
   --set provider=aws \
@@ -113,6 +114,7 @@ helm install externaldns-release \
   --set serviceAccount.name=external-dns \
   --set serviceAccount.create=true \
   --set serviceAccount.annotations="eks.amazonaws.com/role-arn: ${IAM_ROLE_ARN}" \
-  --set policy=sync 
+  --set ppolicy=upsert-only
+echo "#####################################################################"
 
 echo "ConfigMap updates applied, CoreDNS restarted, and Helm charts installed successfully!"
