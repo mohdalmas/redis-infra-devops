@@ -3,7 +3,9 @@
 **Redis Infrastructure DevOps**
 This repository provides Terraform and Helm configurations for setting up and managing Redis infrastructure on AWS EKS clusters.
 
-**Architechture Diagram**
+**Architecture Diagram**
+<img width="1289" alt="image" src="https://github.com/user-attachments/assets/1ce63d01-9e78-474b-aa01-a4e6eb82d0d0">
+
 
 
 **Table of Contents**
