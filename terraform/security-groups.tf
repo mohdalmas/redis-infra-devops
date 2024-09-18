@@ -39,7 +39,7 @@ resource "aws_security_group_rule" "allow_all_inbound_cluster_1a" {
   type              = "ingress"
   from_port         = 0
   to_port           = 0
-  protocol          = "-1"  # Allow all protocols
+  protocol          = "-1" # Allow all protocols
   security_group_id = aws_eks_cluster.eks_clusters["cluster_1a"].vpc_config[0].cluster_security_group_id
   cidr_blocks       = ["0.0.0.0/0"]
 
@@ -51,7 +51,7 @@ resource "aws_security_group_rule" "allow_all_inbound_cluster_1b" {
   type              = "ingress"
   from_port         = 0
   to_port           = 0
-  protocol          = "-1"  # Allow all protocols
+  protocol          = "-1" # Allow all protocols
   security_group_id = aws_eks_cluster.eks_clusters["cluster_1b"].vpc_config[0].cluster_security_group_id
   cidr_blocks       = ["0.0.0.0/0"]
 

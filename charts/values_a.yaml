@@ -307,7 +307,7 @@ service:
   ## @param service.nodePorts.redis Node port for Redis
   ##
   nodePorts:
-    redis: ""
+    redis: "30079"
   ## @param service.extraPorts Extra ports to expose in the service (normally used with the `sidecar` value)
   ##
   extraPorts: []
@@ -315,7 +315,9 @@ service:
   ## This can be used to set the LoadBalancer service type to internal only.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
   ##
-  annotations: {}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: redis-cluster.devops.com
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
   ## @param service.labels Additional labels for redis service
   ##
   labels: {}
@@ -323,7 +325,7 @@ service:
   ## Setting this to LoadBalancer may require corresponding service annotations for loadbalancer creation to succeed.
   ## Currently supported types are ClusterIP (default) and LoadBalancer
   ##
-  type: ClusterIP
+  type: LoadBalancer
   ## @param service.clusterIP Service Cluster IP
   ## e.g.:
   ## clusterIP: None

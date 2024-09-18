@@ -1,0 +1,36 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-gslb-failover
+  namespace: redis-cluster
+  labels:
+    app: failover
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: failover.redis.devops.com # Desired GSLB enabled FQDN
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: redis-cluster-a # Service name to enable GSLB for
+              port: 
+                number: 6379
+---
+apiVersion: k8gb.absa.oss/v1beta1
+kind: Gslb
+metadata:
+  name: test-gslb-failover
+  namespace: redis-cluster
+spec:
+  resourceRef:
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    matchLabels:
+      app: failover
+  strategy:
+    type: failover # Global load balancing strategy
+    primaryGeoTag: us-east-1a # Primary cluster geo tag

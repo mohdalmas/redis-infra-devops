@@ -12,7 +12,7 @@ resource "aws_eks_cluster" "eks_clusters" {
   vpc_config {
     subnet_ids         = [each.value.private_subnet, each.value.public_subnet] # Using private subnets
     security_group_ids = [aws_security_group.eks_sg.id]
-    
+
   }
 
   tags = var.default_tags
@@ -22,20 +22,20 @@ resource "aws_eks_cluster" "eks_clusters" {
 }
 
 resource "aws_eks_access_entry" "eks_access_entry" {
-  for_each = local.eks_clusters
-  cluster_name      = aws_eks_cluster.eks_clusters[each.key].name
-  principal_arn     = "arn:aws:iam::194722417082:root" # Adding route user Access
-  type              = "STANDARD"
+  for_each      = local.eks_clusters
+  cluster_name  = aws_eks_cluster.eks_clusters[each.key].name
+  principal_arn = "arn:aws:iam::194722417082:root" # Adding route user Access
+  type          = "STANDARD"
 
 }
 resource "aws_eks_access_policy_association" "eks_access_entry_policy_association" {
-  for_each = local.eks_clusters
+  for_each      = local.eks_clusters
   cluster_name  = aws_eks_cluster.eks_clusters[each.key].name
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   principal_arn = "arn:aws:iam::194722417082:root"
   access_scope {
-    type       = "cluster"
-  
+    type = "cluster"
+
   }
 
 }
@@ -57,8 +57,8 @@ resource "aws_eks_addon" "aws_ebs_csi_driver" {
   cluster_name                = each.value.cluster_name
   addon_name                  = "aws-ebs-csi-driver"
   resolve_conflicts_on_update = "PRESERVE"
-  depends_on                  = [aws_eks_cluster.eks_clusters]
-  
+  depends_on = [aws_eks_addon.coredns]
+
   # timeouts {
   #   create = "20m"
   #   update = "20m"
@@ -66,7 +66,7 @@ resource "aws_eks_addon" "aws_ebs_csi_driver" {
   lifecycle {
     ignore_changes = all
   }
-
+  
 }
 
 # CoreDNS
@@ -76,8 +76,8 @@ resource "aws_eks_addon" "coredns" {
   cluster_name                = each.value.cluster_name
   addon_name                  = "coredns"
   resolve_conflicts_on_update = "PRESERVE"
-  depends_on                  = [aws_eks_cluster.eks_clusters]
-  
+ 
+
   # timeouts {
   #   create = "20m"
   #   update = "20m"
@@ -85,8 +85,8 @@ resource "aws_eks_addon" "coredns" {
   lifecycle {
     ignore_changes = all
   }
+  depends_on = [aws_eks_addon.kube_proxy]
 
-  
 }
 
 # Kube Proxy
@@ -96,8 +96,8 @@ resource "aws_eks_addon" "kube_proxy" {
   cluster_name                = each.value.cluster_name
   addon_name                  = "kube-proxy"
   resolve_conflicts_on_update = "PRESERVE"
-  depends_on                  = [aws_eks_cluster.eks_clusters]
-  
+
+
   # timeouts {
   #   create = "15m"
   #   update = "15m"
@@ -105,7 +105,7 @@ resource "aws_eks_addon" "kube_proxy" {
   lifecycle {
     ignore_changes = all
   }
- 
+  depends_on = [aws_eks_addon.vpc_cni]
 }
 
 # VPC CNI
@@ -128,7 +128,7 @@ resource "aws_eks_addon" "vpc_cni" {
   lifecycle {
     ignore_changes = all
   }
-  depends_on=[aws_eks_node_group.node_groups]
+  depends_on = [aws_eks_node_group.node_groups]
 }
 
 # EKS Node Groups

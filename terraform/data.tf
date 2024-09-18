@@ -8,13 +8,13 @@ data "tls_certificate" "oidc" {
 data "aws_route53_zone" "devops" {
   name         = "devops.com"
   private_zone = true
-  depends_on = [aws_route53_zone.devops]
+  depends_on   = [aws_route53_zone.devops]
 }
 
 data "aws_eks_cluster" "eks" {
   for_each = aws_eks_cluster.eks_clusters
 
-  name = each.value.name
+  name       = each.value.name
   depends_on = [aws_eks_cluster.eks_clusters]
 }
 

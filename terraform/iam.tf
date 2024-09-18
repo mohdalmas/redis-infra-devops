@@ -123,8 +123,8 @@ module "iam_eks_role" {
       namespace_service_accounts = ["kube-system:external-dns"]
     }
   }
-  tags = var.default_tags
-  depends_on=[aws_eks_cluster.eks_clusters]
+  tags       = var.default_tags
+  depends_on = [aws_eks_cluster.eks_clusters]
 }
 
 
